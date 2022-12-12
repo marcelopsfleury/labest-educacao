@@ -12,6 +12,9 @@ Antes de começar a instalar ou usar pacotes em seu ambiente virtual, você prec
 
 ## Banco de dados
 
+### IBGE
+
+Para criar a query das requests acessar `https://servicodados.ibge.gov.br/api/docs/agregados?versao=3#api-bq`
 ## Análises
 
 

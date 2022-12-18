@@ -1,4 +1,4 @@
-from .tratamento import selecionar_colunas_censo_sup_enade, agregar_prop_rendimento, agregar_pop_rgi_mun, agregar_matricula_ensino_medio, agregar_ideb_por_rgi, agregar_enem_por_rgi, agregar_duracao_minima_cursos, definir_targets
+from tratamento import selecionar_colunas_censo_sup_enade, agregar_prop_rendimento, agregar_pop_rgi_mun, agregar_matricula_ensino_medio, agregar_ideb_por_rgi, agregar_enem_por_rgi, agregar_duracao_minima_cursos, definir_targets
 
 # Carregar aquivo com informações do Censo de Educação superior (acrescida da avaliação do Enade-CPC)
 # Ano = 2019 (ano do censo superior) - cursos presenciais

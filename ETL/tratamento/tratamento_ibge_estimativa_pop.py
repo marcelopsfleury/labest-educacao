@@ -19,4 +19,3 @@ def tratamento_colunas(df_mun_uf):
     df['MUNICIPIO'] = df['MUNICIPIO'].transform(lambda x: re.sub(r'(.+)-.+','\\1', x))
 
     return df
-

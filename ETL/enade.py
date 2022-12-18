@@ -1,6 +1,6 @@
 
 import pandas as pd
-from .tratamento import selecionar_colunas_enade, criar_dataframe_de_saida_enade, aplicar_enade_grau_academico, calcular_media_enade, calcular_media_ponderada_enade
+from tratamento import selecionar_colunas_enade, criar_dataframe_de_saida_enade, aplicar_enade_grau_academico, calcular_media_enade, calcular_media_ponderada_enade
 
 # Lendo dados do Enade (anos de 2015, 2016, 2017, 2018, 2019, 2021) - considera-se a mais recente avaliação do curso no período
 

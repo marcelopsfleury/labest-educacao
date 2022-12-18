@@ -1,5 +1,5 @@
 import pandas as pd
-from .tratamento import selecionar_colunas_enem, calcular_media_por_municipio, pivotear_ano_media_notas, pivotear_ano_qtd_candidatos, calcular_media_por_rgi, calcular_proporcao_candidatos
+from tratamento import selecionar_colunas_enem, calcular_media_por_municipio, pivotear_ano_media_notas, pivotear_ano_qtd_candidatos, calcular_media_por_rgi, calcular_proporcao_candidatos
 
 # Lendo dados do Enem (anos de 2018, 2019 e 2020)
 path_enem_med = []

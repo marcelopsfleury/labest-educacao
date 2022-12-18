@@ -1,4 +1,4 @@
-from .tratamento import matriculas_por_tipo_escola_municipio, calcular_prop_rede_escolar, selecionar_colunas_ideb, aplicar_ajusta_ideb_na, calcular_ideb, ideb_por_rgi, aplicar_ajusta_ideb_rgi_na, aplicar_my_agg_ideb
+from tratamento import matriculas_por_tipo_escola_municipio, calcular_prop_rede_escolar, selecionar_colunas_ideb, aplicar_ajusta_ideb_na, calcular_ideb, ideb_por_rgi, aplicar_ajusta_ideb_rgi_na, aplicar_my_agg_ideb
 import pandas as pd
 
 path_df_censo_basica = ''

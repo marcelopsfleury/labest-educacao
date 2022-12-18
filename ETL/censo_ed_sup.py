@@ -1,4 +1,4 @@
-from .tratamento import selecionar_colunas_censo_sup_2018, selecionar_colunas_censo_sup_2019, aplicar_filtros_censo_sup_2019, formatando_grau_academico, match_tabela_correspondencia, recuperar_info_enade_cpc, remover_duplicatas
+from tratamento import selecionar_colunas_censo_sup_2018, selecionar_colunas_censo_sup_2019, aplicar_filtros_censo_sup_2019, formatando_grau_academico, match_tabela_correspondencia, recuperar_info_enade_cpc, remover_duplicatas
 import pandas as pd
 
 # Lendo dados da Educação Superior (anos de 2018, 2019 e 2020) 

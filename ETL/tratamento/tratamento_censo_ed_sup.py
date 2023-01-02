@@ -1,4 +1,10 @@
+## 1.8) Dados do Censo Educação Superior - INEP (2018, 2019 e 2020)
+
+#### Fonte dos dados: INEP - Censo Superior 2018, 2019 e 2020 (https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior) - <acesso em: 3/6/2022>
+
 import pandas as pd
+import numpy as np
+import re
 
 def selecionar_colunas_censo_sup_2018(path_censo_es_inep):
     cols_names=['ANO','MUNICIPIO','COD_MUN','IN_CAPITAL','TP_ORG','TP_REDE','COD_IES','CURSO','CD_CURSO',\
@@ -17,11 +23,12 @@ def selecionar_colunas_censo_sup_2018(path_censo_es_inep):
                 47,48,49,50,51,52,53,54,56,71,72,73,74,75,76,77,78,79,80,81,82,83,90,93,94,129,130,131,132,135,137,155,174,175,176,186,190]
 
     dict= {'ANO':str,'COD_MUN':str, 'IN_CAPITAL':str,'TP_ORG': str,'TP_REDE':str,'COD_IES':str,'CD_CURSO':str,\
-        'GRAU_ACADEMICO':str, 'QT_ING': np.int64,'QT_MAT':np.int64,'QT_CONC':np.int64}
+        'GRAU_ACADEMICO':str, 'QT_ING': np.float64,'QT_MAT':np.float64,'QT_CONC':np.float64, 'QT_ING_SER': np.float64, 'QT_ING_SIMP': np.float64}
 
-    df_censo_2018 = pd.read_csv(path_censo_es_inep,    sep=';', dtype=dict, encoding="Latin-1",\
+    df_censo_2018 = pd.read_csv(path_censo_es_inep, sep=';', encoding="Latin-1",\
                    names=cols_names, usecols=cols_selected, skiprows=1)
-    
+
+    df_censo_2018 = df_censo_2018.astype(dict)
     return df_censo_2018
 
 def selecionar_colunas_censo_sup_2019(path_censo_es_inep):
@@ -42,14 +49,16 @@ def selecionar_colunas_censo_sup_2019(path_censo_es_inep):
                 47,48,49,50,51,52,53,54,56,57,58,59,60,61,62,63,64,71,72,73,74,75,90,93,94,129,155,174,175,176,186,190]
 
     dict= {'ANO':str,'COD_MUN':str, 'IN_CAPITAL':str,'TP_ORG': str,'TP_REDE':str,'COD_IES':str,'CD_CURSO':str,\
-        'GRAU_ACADEMICO':str,'MODALIDADE':str, 'QT_ING': np.int64,'QT_MAT':np.int64,'QT_CONC':np.int64}
+        'GRAU_ACADEMICO':str,'MODALIDADE':str, 'QT_ING': np.float64,'QT_MAT':np.float64,'QT_CONC':np.float64}
 
-    df_censo_2019 = pd.read_csv(path_censo_es_inep,    sep=';', dtype=dict, encoding="Latin-1",\
+    df_censo_2019 = pd.read_csv(path_censo_es_inep,    sep=';', encoding="Latin-1",\
                     names=cols_names, usecols=cols_selected, skiprows=1)
 
+    df_censo_2019 = df_censo_2019.astype(dict)
     return df_censo_2019
 
 def aplicar_filtros_censo_sup_2019(df_censo_2019):
+    breakpoint()
     df_censo_filtered= df_censo_2019[(df_censo_2019['QT_CONC']>0) & (df_censo_2019['QT_ING']>0)&(df_censo_2019['QT_MAT']>0)&
                                     (df_censo_2019['QT_MAT']>df_censo_2019['QT_ING'])&
                                     (df_censo_2019['QT_MAT']>df_censo_2019['QT_VAGAS_NOVAS'])&
@@ -95,8 +104,9 @@ def aplicar_filtros_censo_sup_2019(df_censo_2019):
 
 def formatando_grau_academico(df_tab_corresp):
     # Formatando o campo 'GRAU_ACADEMICO' para compatibilizar com codfificação dos dados do Censo Superior
+    df_tab_corresp = df_tab_corresp.rename(columns=lambda x: re.sub(r'\n','',x))
     df_tab_corresp['GRAU_ACADEMICO_DESC']=df_tab_corresp['GRAU_ACADEMICO']
-    df_tab_corresp['GRAU_ACADEMICO']=['1' if str.upper(x)=='BACHARELADO' else ('2' if str.upper(x) == 'LICENCIATURA' else '3')\
+    df_tab_corresp['GRAU_ACADEMICO']=['1' if str.upper(x)=='Bacharelado' else ('2' if str.upper(x) == 'Licenciatura' else '3')\
                                         for x in df_tab_corresp['GRAU_ACADEMICO_DESC']]
     df_tab_corresp['CURSO']=df_tab_corresp['ROTULO_SUGERIDO']
     return df_tab_corresp

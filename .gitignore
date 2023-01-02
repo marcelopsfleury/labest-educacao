@@ -3,3 +3,6 @@ env
 dados_saida
 dados_zip
 *.pyc
+*.xlsx
+*.txt
+*.xls

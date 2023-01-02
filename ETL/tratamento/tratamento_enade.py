@@ -6,16 +6,57 @@ import pandas as pd
 import re
 import math
 
-def selecionar_colunas_enade(path_enade_inep):
-       cols_names=['ANO','COD_IES','SIGLA_IES','COD_CURSO','MODALIDADE','COD_AREA','AREA','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
-       dict= {'ANO':str, 'COD_IES':str, 'SIGLA_IES':str, 'COD_CURSO':str,'MODALIDADE':str,\
-              'COD_MUN':str,'NUM_PART':np.int64,'CPC_CONTINUO':np.float64,'CPC_FAIXA':str}
+# Lendo dados do Enade (anos de 2015, 2016, 2017, 2018 e 2019) - considera-se a mais recente avaliação do curso no período
+#importando os dados da pasta local
+cols_names=['ANO','COD_IES','SIGLA_IES','COD_CURSO','MODALIDADE','COD_AREA','AREA','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
+dict= {'ANO':str, 'COD_IES':str, 'SIGLA_IES':str, 'COD_CURSO':str,'MODALIDADE':str,\
+       'COD_MUN':str,'NUM_PART':np.int64,'CPC_CONTINUO':np.float64,'CPC_FAIXA':str}
 
+def selecionar_colunas_enade_2015(path_enade_inep):
        # Ano = 2015
        cols_names_ano=['ANO','COD_IES','SIGLA_IES','COD_CURSO','COD_AREA','AREA','MODALIDADE','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
-       path_enade_inep = 'C://DadosTCC/cpc_2015_portal_atualizado_03_10_2017.xls'
-       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=cols_names_ano,
+       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=[0,1,3,6,7,8,9,10,14,35,36],\
                             names=cols_names_ano, na_values=['-','SC'])
+       df_enade_ano.dropna(subset = ['CPC_CONTINUO'],inplace=True)
+       df_enade_ano.reset_index(inplace=True)
+       df_enade_ano = df_enade_ano[cols_names]
+       return df_enade_ano
+
+def selecionar_colunas_enade_2016(path_enade_inep):
+       # Ano = 2016
+       cols_names_ano=['ANO','COD_IES','SIGLA_IES','COD_CURSO','COD_AREA','AREA','MODALIDADE','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
+       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=[0,1,3,6,7,8,9,10,14,35,36],\
+                            names=cols_names_ano, na_values=['-','SC'])
+       df_enade_ano.dropna(subset = ['CPC_CONTINUO'],inplace=True)
+       df_enade_ano.reset_index(inplace=True)
+       df_enade_ano = df_enade_ano[cols_names]
+       return df_enade_ano
+
+def selecionar_colunas_enade_2017(path_enade_inep):
+       # Ano = 2017
+       cols_names_ano=['ANO','COD_AREA','AREA','COD_IES','SIGLA_IES','COD_CURSO','MODALIDADE','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
+       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=[0,1,2,3,4,8,9,10,14,35,36],\
+                            names=cols_names_ano, na_values='SC')
+       df_enade_ano.dropna(subset = ['CPC_CONTINUO'],inplace=True)
+       df_enade_ano.reset_index(inplace=True)
+       df_enade_ano = df_enade_ano[cols_names]
+       return df_enade_ano
+
+def selecionar_colunas_enade_2018(path_enade_inep):
+       # Ano = 2018
+       cols_names_ano=['ANO','COD_IES','SIGLA_IES','COD_CURSO','COD_AREA','AREA','MODALIDADE','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
+       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=[0,1,3,6,7,8,9,10,14,36,37],\
+                            names=cols_names_ano, na_values=['-','SC'])
+       df_enade_ano.dropna(subset = ['CPC_CONTINUO'],inplace=True)
+       df_enade_ano.reset_index(inplace=True)
+       df_enade_ano = df_enade_ano[cols_names]
+       return df_enade_ano
+
+def selecionar_colunas_enade_2019(path_enade_inep):
+       # Ano = 2019
+       cols_names_ano=['ANO','COD_AREA','AREA','COD_IES','SIGLA_IES','COD_CURSO','MODALIDADE','COD_MUN','NUM_PART','CPC_CONTINUO','CPC_FAIXA']
+       df_enade_ano = pd.read_excel(path_enade_inep,  dtype=dict, usecols=[0,1,2,3,5,8,9,10,14,36,37],\
+                            names=cols_names_ano, na_values='SC')
        df_enade_ano.dropna(subset = ['CPC_CONTINUO'],inplace=True)
        df_enade_ano.reset_index(inplace=True)
        df_enade_ano = df_enade_ano[cols_names]

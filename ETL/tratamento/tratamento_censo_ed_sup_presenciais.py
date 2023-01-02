@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def selecionar_colunas_censo_sup_enade(path_censo_enade):
     dict={'COD_MUN':str, 'COD_IES':str,'CD_CURSO':str,'GRAU_ACADEMICO':str, 'MODALIDADE':str,'TP_REDE':str,'ANO_AVALIACAO':str}
@@ -19,16 +20,24 @@ def agregar_prop_rendimento(path_ibge_rend, df_censo_sup_enade):
     df_ibge_rend = pd.read_excel(path_ibge_rend, dtype=dict)
     # Calculando a proproção do rednimento (mediano) em relação ao SM de 2010 (R$ 510,00), 
     # para colocar numa escala compatível com outras variáveis
+    df_ibge_rend['VLR_REND_W_MD_RGI'] = df_ibge_rend['VLR_REND_W_MD_RGI'].astype(np.float64)
     df_ibge_rend['VLR_REND_PROP_RGI']=round(df_ibge_rend['VLR_REND_W_MD_RGI']/510.0,2)
+
+    breakpoint()
 
     df_educ_superior = df_censo_sup_enade.merge(df_ibge_rend, on='COD_MUN',how='left',suffixes=(None, '_y'))[output_cols]
 
     return df_educ_superior
 
-def agregar_pop_rgi_mun(path_ibge_pop, path_ibge_rgi):
+def agregar_pop_rgi_mun(path_ibge_pop, path_ibge_rgi, df_educ_superior):
     # Agragar demais informações para o modelo: renda, população, enem, ensino médio (mat e ideb),
     # de acordo com o RGI ao qual o curso pertence
-    output_cols=output_cols+['POPULACAO_2019_RGI']
+
+    output_cols = ['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','POLO',\
+            'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC','QT_ING',\
+            'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
+            'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
+            'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI', 'POPULACAO_2019_RGI']
 
     # População (estimativa) por município e rgi
     dict={'COD_MUN':str}
@@ -59,7 +68,11 @@ def agregar_pop_rgi_mun(path_ibge_pop, path_ibge_rgi):
 def agregar_matricula_ensino_medio(path_inep_mat_ens_med, df_educ_superior):
     # Agragar demais informações para o modelo: renda, população, enem, ensino médio (mat e ideb),
     # de acordo com o RGI ao qual o curso pertence
-    output_cols=output_cols+['PERC_MAT_RGI_2019']
+    output_cols = ['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','POLO',\
+            'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC','QT_ING',\
+            'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
+            'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
+            'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI', 'POPULACAO_2019_RGI', 'PERC_MAT_RGI_2019']
 
     # Matrículas no Ensino Médio (proporcionalmente à população) por RGI
     dict={'COD_MUN':str, 'COD_RGI':str}
@@ -72,7 +85,11 @@ def agregar_matricula_ensino_medio(path_inep_mat_ens_med, df_educ_superior):
 def agregar_ideb_por_rgi(path_inep_ideb, df_educ_superior):
     # Agregar demais informações para o modelo: renda, população, enem, ensino médio (mat e ideb),
     # de acordo com o RGI ao qual o curso pertence
-    output_cols=output_cols+['IDEB_RGI']
+    output_cols = ['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','POLO',\
+            'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC','QT_ING',\
+            'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
+            'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
+            'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI', 'POPULACAO_2019_RGI', 'PERC_MAT_RGI_2019', 'IDEB_RGI']
 
     # Ideb no Ensino Médio por RGI
     dict={'COD_MUN':str, 'COD_RGI':str}
@@ -85,7 +102,12 @@ def agregar_ideb_por_rgi(path_inep_ideb, df_educ_superior):
 def agregar_enem_por_rgi(path_inep_enem, df_educ_superior):
     # Agregar demais informações para o modelo: renda, população, enem, ensino médio (mat e ideb),
     # de acordo com o RGI ao qual o curso pertence
-    output_cols=output_cols+['PROP_CAND_RGI_2019','MEDIA_NOTAS_RGI_2019']
+    output_cols = ['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','POLO',\
+            'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC','QT_ING',\
+            'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
+            'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
+            'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI', 'POPULACAO_2019_RGI', 'PERC_MAT_RGI_2019', 'IDEB_RGI',
+            'PROP_CAND_RGI_2019','MEDIA_NOTAS_RGI_2019']
 
     # Enem (Propporção de candidatos e média das notas) por RGI
     dict={'COD_MUN':str, 'COD_RGI':str}
@@ -105,12 +127,18 @@ def agregar_duracao_minima_cursos(path_dur_cursos, df_educ_superior):
     # Agragar demais informações para o modelo: renda, população, enem, ensino médio (mat e ideb) e duração do curso (em anos)
     # de acordo com o RGI ao qual o curso pertence
     # Dados sobre duração (mínima) dos cursos obtidos por meio de consulta às resoluções do MEC
-    output_cols=output_cols+['DUR_CURSO']
+    output_cols = ['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','POLO',\
+            'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC','QT_ING',\
+            'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
+            'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
+            'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI', 'POPULACAO_2019_RGI', 'PERC_MAT_RGI_2019', 'IDEB_RGI',
+            'PROP_CAND_RGI_2019','MEDIA_NOTAS_RGI_2019', 'DUR_CURSO']
 
     # Enem (Propporção de candidatos e média das notas) por RGI
-    path_dur_cursos = 'C://DadosTCC/cursos_duracao.xlsx'
     # dict={'COD_MUN':str, 'COD_RGI':str}
     df_dur_cursos = pd.read_excel(path_dur_cursos)
+
+    breakpoint()
 
     df_educ_superior = df_educ_superior.merge(df_dur_cursos, on='CURSO',how='left',suffixes=(None, '_y'))[output_cols]
 

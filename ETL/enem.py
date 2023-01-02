@@ -1,8 +1,17 @@
+## 1.6) Dados do Enem - notas e num. candidatos (por município/RGI)
+
+#### Fonte dos dados: INEP - Enem 2018, 2019 e 2020 (https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem) - <acesso em: 3/6/2022>
+
+##### Considerando o muicípio ao qual pertence a escola em que o candidato concluiu (ou está concluindo) o ensino médio 
+
 import pandas as pd
 from tratamento import selecionar_colunas_enem, calcular_media_por_municipio, pivotear_ano_media_notas, pivotear_ano_qtd_candidatos, calcular_media_por_rgi, calcular_proporcao_candidatos
 
 # Lendo dados do Enem (anos de 2018, 2019 e 2020)
-path_enem_med = []
+path_enem_med = ["./extracao/dados_zip/MICRODADOS_ENEM_2018.csv",
+                 "./extracao/dados_zip/MICRODADOS_ENEM_2019.csv",
+                 "./extracao/dados_zip/MICRODADOS_ENEM_2020.csv"
+                 ]
 df_enem_ano = []
 
 for path in path_enem_med:
@@ -27,10 +36,10 @@ df_enem_qtd_notas = df_enem_qtd.merge(df_enem_nota, on='COD_MUN',how='left',suff
 
 
 # Lendo dados sobre região geográfica e estimativa populacional dos municípios (2018, 2019 e 2020)
-path_ibge_rgi = 'C://DadosTCC/Saida/regiao_geografica_municipios.xlsx'
+path_ibge_rgi = './dados_saida/regiao_geografica_municipios.xlsx'
 df_rgi = pd.read_excel(path_ibge_rgi, dtype={'COD_MUN':str,'COD_RGI':str})
 
-path_ibge_pop = 'C://DadosTCC/Saida/estimativa_pop_municipios.xlsx'
+path_ibge_pop = './dados_saida/estimativa_pop_municipios.xlsx'
 df_pop = pd.read_excel(path_ibge_pop, dtype={'COD_MUN':str})
 
 
@@ -48,5 +57,5 @@ df_enem_mun_rgi_saida =df_pop_rgi.merge(df_enem_mun_rgi,on='COD_RGI',how='left',
 df_enem_mun_rgi_saida.fillna(0,inplace=True)
 
 # Exportando os dados da pasta local
-path_output = ''
+path_output = './dados_saida/enem_cand_notas_mun_rgi.xlsx'
 df_enem_mun_rgi_saida.to_excel(path_output, index=False)

@@ -21,8 +21,8 @@ df_censo_basica = pd.concat(df_censo_basica_ano)
 
 df_censo_basica = selecionar_escolas_em_atividade(df_censo_basica)
 
-path_output = './dados_saida/df_censo_basica.xlsx'
-df_censo_basica.to_excel(path_output, index=False) # para usar no 1.5 ibed ensino medio
+path_output = './dados_saida/df_censo_basica.csv'
+df_censo_basica.to_csv(path_output, index=False) # para usar no 1.5 ibed ensino medio
 
 df_censo_basica_mun = total_matriculas_por_mun_ano(df_censo_basica)
 
@@ -40,7 +40,6 @@ df_mat_prop_mun = percentual_matricula_por_municipio(df_estimativa_pop, df_censo
 path_ibge_rgi = './dados_saida/regiao_geografica_municipios.xlsx'
 df_rgi = pd.read_excel(path_ibge_rgi, dtype={'COD_MUN':object,'COD_RGI':object})
 
-breakpoint()
 df_prop_mat_rgi, df_prop_mat_merged = percentual_matricula_por_rgi(df_mat_prop_mun, df_rgi)
 
 df_mat_mun_rgi = merge_matriculas_mun_rgi(df_prop_mat_merged, df_prop_mat_rgi)

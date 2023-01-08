@@ -1,4 +1,10 @@
+## 1.8) Dados do Censo Educação Superior - INEP (2018, 2019 e 2020)
+
+#### Fonte dos dados: INEP - Censo Superior 2018, 2019 e 2020 (https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior) - <acesso em: 3/6/2022>
+
 import pandas as pd
+import numpy as np
+import re
 
 def selecionar_colunas_censo_sup_2018(path_censo_es_inep):
     cols_names=['ANO','MUNICIPIO','COD_MUN','IN_CAPITAL','TP_ORG','TP_REDE','COD_IES','CURSO','CD_CURSO',\
@@ -17,11 +23,17 @@ def selecionar_colunas_censo_sup_2018(path_censo_es_inep):
                 47,48,49,50,51,52,53,54,56,71,72,73,74,75,76,77,78,79,80,81,82,83,90,93,94,129,130,131,132,135,137,155,174,175,176,186,190]
 
     dict= {'ANO':str,'COD_MUN':str, 'IN_CAPITAL':str,'TP_ORG': str,'TP_REDE':str,'COD_IES':str,'CD_CURSO':str,\
-        'GRAU_ACADEMICO':str, 'QT_ING': np.int64,'QT_MAT':np.int64,'QT_CONC':np.int64}
+       'GRAU_ACADEMICO':str}
 
-    df_censo_2018 = pd.read_csv(path_censo_es_inep,    sep=';', dtype=dict, encoding="Latin-1",\
+    df_censo_2018 = pd.read_csv(path_censo_es_inep, sep=';', encoding="Latin-1",
                    names=cols_names, usecols=cols_selected, skiprows=1)
-    
+
+    df_censo_2018 = df_censo_2018.astype(dict)
+    df_censo_2018['QT_ING'] = df_censo_2018['QT_ING'].astype("Int64")
+    df_censo_2018['QT_MAT'] = df_censo_2018['QT_MAT'].astype("Int64") 
+    df_censo_2018['QT_CONC'] = df_censo_2018['QT_CONC'].astype("Int64")
+    df_censo_2018.dropna(subset=['MUNICIPIO'],inplace=True)
+
     return df_censo_2018
 
 def selecionar_colunas_censo_sup_2019(path_censo_es_inep):
@@ -42,20 +54,31 @@ def selecionar_colunas_censo_sup_2019(path_censo_es_inep):
                 47,48,49,50,51,52,53,54,56,57,58,59,60,61,62,63,64,71,72,73,74,75,90,93,94,129,155,174,175,176,186,190]
 
     dict= {'ANO':str,'COD_MUN':str, 'IN_CAPITAL':str,'TP_ORG': str,'TP_REDE':str,'COD_IES':str,'CD_CURSO':str,\
-        'GRAU_ACADEMICO':str,'MODALIDADE':str, 'QT_ING': np.int64,'QT_MAT':np.int64,'QT_CONC':np.int64}
+        'GRAU_ACADEMICO':str,'MODALIDADE':str}
 
-    df_censo_2019 = pd.read_csv(path_censo_es_inep,    sep=';', dtype=dict, encoding="Latin-1",\
+    df_censo_2019 = pd.read_csv(path_censo_es_inep,    sep=';', encoding="Latin-1",\
                     names=cols_names, usecols=cols_selected, skiprows=1)
+
+    df_censo_2019 = df_censo_2019.astype(dict)
+    df_censo_2019['QT_ING'] = df_censo_2019['QT_ING'].astype("Int64")
+    df_censo_2019['QT_MAT'] = df_censo_2019['QT_MAT'].astype("Int64") 
+    df_censo_2019['QT_CONC'] = df_censo_2019['QT_CONC'].astype("Int64")
+    df_censo_2019['QT_VAGAS_NOVAS'] = df_censo_2019['QT_VAGAS_NOVAS'].astype("Int64")
+
+    df_censo_2019['QT_ING'] = df_censo_2019['QT_ING'].fillna(0)
+    # df_censo_2019.dropna(subset=['MUNICIPIO'],inplace=True)
 
     return df_censo_2019
 
 def aplicar_filtros_censo_sup_2019(df_censo_2019):
-    df_censo_filtered= df_censo_2019[(df_censo_2019['QT_CONC']>0) & (df_censo_2019['QT_ING']>0)&(df_censo_2019['QT_MAT']>0)&
-                                    (df_censo_2019['QT_MAT']>df_censo_2019['QT_ING'])&
-                                    (df_censo_2019['QT_MAT']>df_censo_2019['QT_VAGAS_NOVAS'])&
-                                    ((df_censo_2019['MODALIDADE']=='2')|((df_censo_2019['MODALIDADE']=='1') & (df_censo_2019['QT_TOTAL_VAGAS']>= 20)))&
-                                    ((df_censo_2019['MODALIDADE']=='2')|((df_censo_2019['MODALIDADE']=='1') & ((df_censo_2019['QT_ING']*5)>=
-                                                                                                        (df_censo_2019['QT_MAT']*0.5))))]
+    # QT_ING tá vindo com pouquissimos dados
+    df_censo_filtered = df_censo_2019[(df_censo_2019['QT_CONC']>0) & (df_censo_2019['QT_ING']>0)&(df_censo_2019['QT_MAT']>0)&
+                                 (df_censo_2019['QT_MAT']>df_censo_2019['QT_ING'])&
+                                 (df_censo_2019['QT_MAT']>df_censo_2019['QT_VAGAS_NOVAS'])&
+                                 ((df_censo_2019['MODALIDADE']=='2')|((df_censo_2019['MODALIDADE']=='1') & (df_censo_2019['QT_TOTAL_VAGAS']>= 20)))&
+                                 ((df_censo_2019['MODALIDADE']=='2')|((df_censo_2019['MODALIDADE']=='1') & ((df_censo_2019['QT_ING']*5)>=
+                                                                                                    (df_censo_2019['QT_MAT']*0.5))))]
+
     df_censo_filtered.dropna(subset=['COD_MUN'],inplace=True)
     # df_censo_filtered.reset_index(inplace=True)
 
@@ -108,19 +131,27 @@ def match_tabela_correspondencia(df_censo_filtered,df_tab_corresp):
                 'QT_TOTAL_VAGAS','QT_INSC_TOTAL','QT_MAT','QT_ING','QT_CONC',
                 'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL',
                 'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','FAIXA_ETARIA_ING']
-    df_corresp =  df_censo_filtered.merge(df_tab_corresp, on=['CURSO','GRAU_ACADEMICO'], how='left',suffixes=(None, '_y'))\
-                            [output_cols]
+    df_tab_corresp["GRAU_ACADEMICO"] = df_tab_corresp["GRAU_ACADEMICO"].astype(np.float64)
+    df_censo_filtered["GRAU_ACADEMICO"] = df_censo_filtered["GRAU_ACADEMICO"].astype(np.float64)
+    df_censo_filtered["COD_MUN"] = df_censo_filtered["COD_MUN"].astype(np.float64)
+    df_corresp =  df_censo_filtered.merge(df_tab_corresp, on=['CURSO','GRAU_ACADEMICO'], how='left',suffixes=(None, '_y'))[output_cols]
     df_corresp['DENOMINACAO_CURSO']=df_corresp['DENOMINACAO_CURSO'].str.upper()
     df_corresp.sort_values(by=['COD_MUN','COD_IES','DENOMINACAO_CURSO','GRAU_ACADEMICO'], inplace=True,
                 ascending = [True, True,True,True])
     # Alterar nome de colunas para match com dados do Enade-CPC
     df_corresp.rename(columns={'CURSO':'NM_CURSO'}, inplace=True)                                   
     df_corresp.rename(columns={'DENOMINACAO_CURSO':'CURSO'}, inplace=True)
+    df_corresp.dropna(subset=["COD_MUN"], inplace=True)
     return df_corresp
 
 
 def recuperar_info_enade_cpc(df_corresp, df_enade_curso_ult_aval):
     # Recuperando informações do Enade-CPC para utilizá-la como variável do modelo de ML
+    df_corresp["COD_IES"] = df_corresp["COD_IES"].astype(np.float64)
+
+    df_enade_curso_ult_aval["COD_MUN"] = df_enade_curso_ult_aval["COD_MUN"].astype(np.float64)
+    df_enade_curso_ult_aval["COD_IES"] = df_enade_curso_ult_aval["COD_IES"].astype(np.float64)
+
     df_censo_enade = df_corresp.merge(df_enade_curso_ult_aval,on=['COD_IES','COD_MUN','CURSO'],how='inner',suffixes=(None, '_y'))\
         [['COD_MUN', 'COD_IES','CD_CURSO','NM_CURSO','GRAU_ACADEMICO','MODALIDADE','TP_REDE','ANO_AVALIACAO',
         'QT_TOTAL_VAGAS','QT_INSC_TOTAL','QT_MAT','QT_ING','QT_CONC',

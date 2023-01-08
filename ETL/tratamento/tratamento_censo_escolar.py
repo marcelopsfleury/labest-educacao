@@ -2,7 +2,8 @@ import pandas as pd
 
 def selecionar_colunas_censo_escolar(path_inep_censo):
     cols_names=['ANO','COD_MUN','COD_ESCOLA','NOME_ESCOLA','TIPO_ESCOLA','TIPO_LOCAL','SITUACAO','QT_MAT_MED','QT_MAT_PROF','QT_MAT_EJA_MED']
-    df_censo_basica_ano = pd.read_csv(path_inep_censo, dtype=str, usecols=[0,7,13,14,15,17,26,305,307,310] ,names=cols_names)
+    df_censo_basica_ano = pd.read_csv(path_inep_censo, dtype=str, usecols=[0,7,13,14,15,17,26,305,307,310] ,names=cols_names, delimiter=';')
+    df_censo_basica_ano = df_censo_basica_ano.iloc[1:,:] # removendo primeira linha dos nomes originais das colunas.
     return df_censo_basica_ano
 
 def selecionar_escolas_em_atividade(df_censo_basica):

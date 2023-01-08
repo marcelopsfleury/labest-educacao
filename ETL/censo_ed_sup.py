@@ -1,9 +1,13 @@
-from .tratamento import selecionar_colunas_censo_sup_2018, selecionar_colunas_censo_sup_2019, aplicar_filtros_censo_sup_2019, formatando_grau_academico, match_tabela_correspondencia, recuperar_info_enade_cpc, remover_duplicatas
+## 1.8) Dados do Censo Educação Superior - INEP (2018, 2019 e 2020)
+
+#### Fonte dos dados: INEP - Censo Superior 2018, 2019 e 2020 (https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior) - <acesso em: 3/6/2022>
+
+from tratamento import selecionar_colunas_censo_sup_2018, selecionar_colunas_censo_sup_2019, aplicar_filtros_censo_sup_2019, formatando_grau_academico, match_tabela_correspondencia, recuperar_info_enade_cpc, remover_duplicatas
 import pandas as pd
 
-# Lendo dados da Educação Superior (anos de 2018, 2019 e 2020) 
-path_censo_es_inep_2018 = ''
-path_censo_es_inep_2019 = ''
+# Lendo dados da Educação Superior (anos de 2018, 2019) 
+path_censo_es_inep_2018 = './extracao/dados_zip/MICRODADOS_CADASTRO_CURSOS_2018.CSV'
+path_censo_es_inep_2019 = './extracao/dados_zip/MICRODADOS_CADASTRO_CURSOS_2019.CSV'
 
 df_censo_2018 = selecionar_colunas_censo_sup_2018(path_censo_es_inep_2018)
 df_censo_2019 = selecionar_colunas_censo_sup_2019(path_censo_es_inep_2019)
@@ -14,7 +18,7 @@ df_censo_2019 = selecionar_colunas_censo_sup_2019(path_censo_es_inep_2019)
 df_censo_filtered = aplicar_filtros_censo_sup_2019(df_censo_2019)
 
 # Utilizando a Tabela de correspondência de cursos (INEP) para obter informações do Enade-CPC dos cursos
-path_tab_corresp = ''
+path_tab_corresp = './extracao/dados_zip/tabela_correspondencia_cursos.xlsx'
 df_tab_corresp = pd.read_excel(path_tab_corresp)
 
 # Formatando o campo 'GRAU_ACADEMICO' para compatibilizar com codfificação dos dados do Censo Superior
@@ -22,11 +26,11 @@ df_tab_corresp = formatando_grau_academico(df_tab_corresp)
 
 # Fazendo o match da tabela de correspondência com dados do Censo Superior
 # (mais de uma possibilidade de denominação por curso, o que não representa problema na recuperação de dados do Enade-CPC)
-df_corresp = match_tabela_correspondencia(df_censo_filtered, df_censo_filtered)
+df_corresp = match_tabela_correspondencia(df_censo_filtered, df_tab_corresp)
 
 # Carregando dados do Enade-CPC
 # Utilizando a Tabela de correspondência de cursos (INEP) para obter informações do Enade-CPC dos cursos
-path_enade_cpc = ''
+path_enade_cpc = './dados_saida/enade_cpc_cursos_quali_ies.xlsx'
 dict={'COD_MUN':str,'COD_CURSO':str, 'COD_IES':str,'COD_AREA':str,'ANO_AVALIACAO':str,'GRAU_ACADEMICO':str}
 df_enade_curso_ult_aval = pd.read_excel(path_enade_cpc, dtype=dict)
 
@@ -42,5 +46,5 @@ df_censo_enade_unique = remover_duplicatas(df_censo_enade)
 
 # Gravar saída : Censo Educ Superior (com avaliação Enade-CPC)
 # exportando os dados da pasta local
-path_output = ''
+path_output = './dados_saida/censo_sup_enade_cursos_2019.xlsx'
 df_censo_enade_unique.to_excel(path_output, index=False)

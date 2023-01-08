@@ -3,16 +3,18 @@ import pandas as pd
 
 def matriculas_por_tipo_escola_municipio(df_censo_basica):
     # Total de matrículas no ensino médio por município e tipo de escola (pública/privada) para o ano de 2019
-    df_mat_med_rede = df_censo_basica[(df_censo_basica['ANO']=='2019')&(df_censo_basica['TIPO_ESCOLA'].isin(['2','4']))&\
-                                    (df_censo_basica['QT_TOT_MAT_MED'] >0)].groupby(['COD_MUN','TIPO_ESCOLA'], as_index=False)\
-                                    ['QT_TOT_MAT_MED'].sum()
+    df_censo_basica["ANO"] = df_censo_basica["ANO"].astype(str)
+    df_mat_med_rede = df_censo_basica[(df_censo_basica['ANO'] == '2019')&(df_censo_basica['TIPO_ESCOLA'].isin([2,4]))&\
+                                 (df_censo_basica['QT_TOT_MAT_MED'] > 0)].groupby(['COD_MUN','TIPO_ESCOLA'], as_index=False)\
+                                ['QT_TOT_MAT_MED'].sum()
+
     return df_mat_med_rede
 
 def calcular_prop_rede_escolar(df_mat_med_rede):
     # Calculando a proporção da rede escolar (pública e privada) de Ensino Médio
     df_mat_prop_med_rede = pd.pivot_table(df_mat_med_rede, values='QT_TOT_MAT_MED', columns=['TIPO_ESCOLA'], index=['COD_MUN']).rename_axis(None, axis=1)
     df_mat_prop_med_rede.reset_index(inplace=True)
-    df_mat_prop_med_rede.rename(columns={'2':'ESCOLA_PUBLICA','4':'ESCOLA_PRIVADA'}, inplace=True)   
+    df_mat_prop_med_rede.rename(columns={2:'ESCOLA_PUBLICA',4:'ESCOLA_PRIVADA'}, inplace=True)   
     df_mat_prop_med_rede.fillna(0, inplace=True)
 
     # Obs: Nem todos os municípios ofertam o Ensino Médio
@@ -26,12 +28,13 @@ def selecionar_colunas_ideb(path_ideb_med):
     #importando os dados da pasta local
     cols_names=['UF','COD_MUN','MUNICIPIO','TIPO_REDE','IDEB']
     dict= {'UF':str, 'COD_MUN':str, 'MUNICIPIO':str, 'TIPO_REDE':str,'IDEB':np.float64}
-    df_ideb_med = pd.read_excel(path_ideb_med, dtype=str,skiprows=2,usecols=[0,1,2,3,23], na_values='-', names=cols_names)
+    df_ideb_med = pd.read_excel(path_ideb_med, dtype=str,skiprows=9, skipfooter=3, usecols=[0,1,2,3,23], na_values='-', names=cols_names)
     df_ideb_med.dropna(subset = ['IDEB'],inplace=True)
     df_ideb_med.reset_index(inplace=True)
     # df_ideb_med
 
     # Pivoteando o DF por tipo de escola
+    df_ideb_med['IDEB'] = df_ideb_med['IDEB'].astype(np.float64)
     df_ideb_med_rede = pd.pivot_table(df_ideb_med[df_ideb_med['TIPO_REDE'].isin(['Estadual','Pública'])], values='IDEB', columns=['TIPO_REDE'], index=['COD_MUN']).rename_axis(None, axis=1)
     df_ideb_med_rede.reset_index(inplace=True)
     df_ideb_med_rede.rename(columns={'Estadual':'IDEB_ESCOLA_PRIVADA','Pública':'IDEB_ESCOLA_PUBLICA'}, inplace=True)   
@@ -57,6 +60,7 @@ def aplicar_ajusta_ideb_na(df_ideb_med_rede):
 
 def calcular_ideb(df_ideb_med_rede, df_mat_prop_med_rede):
     # Calcular a IDEB proporcional à quantidade de matrículas para redes públicas e privadas
+    df_mat_prop_med_rede['COD_MUN'] = df_mat_prop_med_rede['COD_MUN'].astype(str)
     df_ideb_prop = df_ideb_med_rede.merge(df_mat_prop_med_rede,on='COD_MUN',how='inner',suffixes=(None, '_y'))\
                 [['COD_MUN','ESCOLA_PUBLICA','PROP_PUBLICA','ESCOLA_PRIVADA','PROP_PRIVADA','IDEB_ESCOLA_PUBLICA','IDEB_ESCOLA_PRIVADA']]
     df_ideb_prop['IDEB_MUN']=round(df_ideb_prop['PROP_PUBLICA']*df_ideb_prop['IDEB_ESCOLA_PUBLICA'] + \

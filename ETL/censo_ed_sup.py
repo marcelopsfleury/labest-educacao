@@ -5,7 +5,7 @@
 from tratamento import selecionar_colunas_censo_sup_2018, selecionar_colunas_censo_sup_2019, aplicar_filtros_censo_sup_2019, formatando_grau_academico, match_tabela_correspondencia, recuperar_info_enade_cpc, remover_duplicatas
 import pandas as pd
 
-# Lendo dados da Educação Superior (anos de 2018, 2019 e 2020) 
+# Lendo dados da Educação Superior (anos de 2018, 2019) 
 path_censo_es_inep_2018 = './extracao/dados_zip/MICRODADOS_CADASTRO_CURSOS_2018.CSV'
 path_censo_es_inep_2019 = './extracao/dados_zip/MICRODADOS_CADASTRO_CURSOS_2019.CSV'
 

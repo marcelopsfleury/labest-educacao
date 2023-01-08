@@ -9,7 +9,6 @@ from tratamento import selecionar_colunas_censo_sup_enade, agregar_prop_rendimen
 # Carregar aquivo com informações do Censo de Educação superior (acrescida da avaliação do Enade-CPC)
 # Ano = 2019 (ano do censo superior) - cursos presenciais
 path_censo_enade = './dados_saida/censo_sup_enade_cursos_2019.xlsx'
-
 df_censo_sup_enade = selecionar_colunas_censo_sup_enade(path_censo_enade)
 
 # Rendimento per capita (censo 2010)
@@ -42,12 +41,13 @@ df_educ_superior = definir_targets(df_educ_superior)
 # Gravar saída : Dados da Educação Superior em 2019 para utilizar no Modelo de ML
 # exportando os dados da pasta local
 # reordenando as colunas para gravar resultado
-output_cols=['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','DUR_CURSO','GRAU_ACADEMICO','TP_REDE','POLO',\
-             'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC',\
-             'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',\
-             'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',\
-             'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI','POPULACAO_2019_RGI',\
-             'FAIXA_POPULACAO_RGI','PERC_MAT_RGI_2019','IDEB_RGI','PERC_CAND_ENEM_RGI_2019','MEDIA_CAND_ENEM_RGI_2019',
+output_cols=['COD_MUN','COD_RGI','COD_IES','CD_CURSO','CURSO','DUR_CURSO','GRAU_ACADEMICO','TP_REDE','POLO',
+             'QT_TOTAL_VAGAS', 'QT_INSC_TOTAL','QT_MAT','QT_CONC',
+             'TX_MAT_FEM','TX_MAT_COTA','TX_MAT_NOTURNO','TX_MAT_FINANC','TX_ASSIST_ESTUDANTIL','FAIXA_ETARIA_ING',
+             'TX_CONCORRENCIA','TX_ING_ENEM','TX_ORIG_ESC_PUBL','TX_ATIV_EXTRA','CPC_CONTINUO','CPC_FAIXA',
+             'TX_ESC_QUALI_IES','VLR_REND_PROP_RGI','POPULACAO_2019_RGI',
+             'FAIXA_POPULACAO_RGI',
+             'PERC_MAT_RGI_2019','IDEB_RGI','PERC_CAND_ENEM_RGI_2019','MEDIA_CAND_ENEM_RGI_2019',
              'TARGET_TX_OCUP_INI','TARGET_TX_CONC_VAGAS','TARGET_TX_CONC_ING','TARGET_TX_OCUP']
 
 path_output = './dados_saida/ES_cursos_presenciais_2019.xlsx'

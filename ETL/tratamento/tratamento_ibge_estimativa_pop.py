@@ -10,9 +10,9 @@ def tratamento_colunas(df_mun_uf):
     df = df_mun_uf.rename(columns={
         'localidade.id': 'COD_MUN', 
         'localidade.nome': 'MUNICIPIO',
-        'serie.2018': 'POPULACAO_2018',
         'serie.2019': 'POPULACAO_2019',
-        'serie.2020': 'POPULACAO_2020'})
+        'serie.2020': 'POPULACAO_2020',
+        'serie.2021': 'POPULACAO_2021'})
 
     df['UF'] = df['MUNICIPIO'].transform(lambda x: re.sub(r'.+ - ','', x))
 

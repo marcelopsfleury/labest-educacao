@@ -31,7 +31,7 @@ def pivotear_ano_qtd_candidatos(df_enem_mun):
        # Pivoteando por ano para quantidade de candidatos por município da prova
        df_enem_qtd = pd.pivot_table(df_enem_mun, values='QTD_CANDIDATOS', columns=['ANO'], index=['COD_MUN_PROVA']).rename_axis(None, axis=1)
        df_enem_qtd.reset_index(inplace=True)
-       df_enem_qtd.rename(columns={'COD_MUN_PROVA':'COD_MUN','2018':'QT_CAND_2018','2019':'QT_CAND_2019','2020':'QT_CAND_2020'}, inplace=True)                                   
+       df_enem_qtd.rename(columns={'COD_MUN_PROVA':'COD_MUN','2019':'QT_CAND_2019','2020':'QT_CAND_2020','2021':'QT_CAND_2021'}, inplace=True)                                   
        return df_enem_qtd
 
 
@@ -39,19 +39,19 @@ def pivotear_ano_media_notas(df_enem_mun):
        # Pivoteando por ano para média das notas por município da provadf_enem_qtd = pd.pivot_table(df_enem_mun, values='QTD_CANDIDATOS', columns=['ANO'], index=['COD_MUN_PROVA']).rename_axis(None, axis=1)
        df_enem_nota = pd.pivot_table(df_enem_mun, values='MEDIA_NOTAS', columns=['ANO'], index=['COD_MUN_PROVA']).rename_axis(None, axis=1)
        df_enem_nota.reset_index(inplace=True)
-       df_enem_nota.rename(columns={'COD_MUN_PROVA':'COD_MUN','2018':'MEDIA_NOTAS_2018','2019':'MEDIA_NOTAS_2019','2020':'MEDIA_NOTAS_2020'}, inplace=True)                                   
+       df_enem_nota.rename(columns={'COD_MUN_PROVA':'COD_MUN','2019':'MEDIA_NOTAS_2019','2020':'MEDIA_NOTAS_2020','2021':'MEDIA_NOTAS_2021'}, inplace=True)                                   
        return df_enem_nota
 
 
 def calcular_media_por_rgi(df_pop, df_rgi, df_enem_qtd_notas):
        # Fazendo merge para calcular proporção de candidatos pela população e média (para cada RGI)
        # Obs: nesse caso não faz sentido calcular por município, pois as provas não são realizadas em todos os municípios
-       df_pop_rgi = df_pop.merge(df_rgi,on='COD_MUN',how='inner',suffixes=(None, '_y'))[['COD_MUN','UF','MUNICIPIO','COD_RGI',\
-                                                               'POPULACAO_2018', 'POPULACAO_2019','POPULACAO_2020']]
-       df_enem_mun_qtd_notas = df_pop_rgi.merge(df_enem_qtd_notas, on='COD_MUN', how='left',suffixes=(None, '_y'))[['COD_MUN','MUNICIPIO','COD_RGI',\
-                                                 'POPULACAO_2018','POPULACAO_2019','POPULACAO_2020',\
-                                                 'QT_CAND_2018','QT_CAND_2019','QT_CAND_2020',\
-                                                 'MEDIA_NOTAS_2018','MEDIA_NOTAS_2019','MEDIA_NOTAS_2020']]
+       df_pop_rgi = df_pop.merge(df_rgi,on='COD_MUN',how='inner',suffixes=(None, '_y'))[['COD_MUN','UF','MUNICIPIO','COD_RGI',
+                                                               'POPULACAO_2019', 'POPULACAO_2020','POPULACAO_2021']]
+       df_enem_mun_qtd_notas = df_pop_rgi.merge(df_enem_qtd_notas, on='COD_MUN', how='left',suffixes=(None, '_y'))[['COD_MUN','MUNICIPIO','COD_RGI',
+                                                 'POPULACAO_2019','POPULACAO_2020','POPULACAO_2021',
+                                                 'QT_CAND_2019','QT_CAND_2020','QT_CAND_2021',
+                                                 'MEDIA_NOTAS_2019','MEDIA_NOTAS_2020','MEDIA_NOTAS_2021']]
        df_enem_mun_qtd_notas.fillna(0,inplace=True)
        df_enem_mun_qtd_notas.sort_values(by=['COD_RGI','COD_MUN'], inplace=True,
                      ascending = [True, True],ignore_index=True)
@@ -62,30 +62,30 @@ def my_agg_enem(x):
        # Agrupamento pra calcular proporção de candidatos em relação à população e a média das notas do RGI
        # (ponderada pela qtd de candidatos em cada município foi aplicada prova)
        names = {
-              'TOT_POPULACAO_2018': x['POPULACAO_2018'].sum(),
               'TOT_POPULACAO_2019': x['POPULACAO_2019'].sum(),
               'TOT_POPULACAO_2020': x['POPULACAO_2020'].sum(),
-              'TOT_CAND_2018': x['QT_CAND_2018'].sum(),
+              'TOT_POPULACAO_2021': x['POPULACAO_2021'].sum(),
               'TOT_CAND_2019': x['QT_CAND_2019'].sum(),
               'TOT_CAND_2020': x['QT_CAND_2020'].sum(),
-              'PROD_MEDIA_CAND_2018': (x['QT_CAND_2018']*x['MEDIA_NOTAS_2018']).sum(),
+              'TOT_CAND_2021': x['QT_CAND_2021'].sum(),
               'PROD_MEDIA_CAND_2019': (x['QT_CAND_2019']*x['MEDIA_NOTAS_2019']).sum(),
-              'PROD_MEDIA_CAND_2020': (x['QT_CAND_2020']*x['MEDIA_NOTAS_2020']).sum()
+              'PROD_MEDIA_CAND_2020': (x['QT_CAND_2020']*x['MEDIA_NOTAS_2020']).sum(),
+              'PROD_MEDIA_CAND_2021': (x['QT_CAND_2021']*x['MEDIA_NOTAS_2021']).sum()
               }
        return pd.Series(names)
 
 def calcular_proporcao_candidatos(df_enem_mun_qtd_notas):
        df_enem_mun_rgi = df_enem_mun_qtd_notas.groupby('COD_RGI', as_index=False)['COD_MUN','COD_RGI',\
-                                                    'POPULACAO_2018','POPULACAO_2019','POPULACAO_2020',\
-                                                    'QT_CAND_2018','QT_CAND_2019','QT_CAND_2020',\
-                                                    'MEDIA_NOTAS_2018','MEDIA_NOTAS_2019','MEDIA_NOTAS_2020'].apply(my_agg_enem)
+                                                    'POPULACAO_2019','POPULACAO_2020','POPULACAO_2021',\
+                                                    'QT_CAND_2019','QT_CAND_2020','QT_CAND_2021',\
+                                                    'MEDIA_NOTAS_2019','MEDIA_NOTAS_2020','MEDIA_NOTAS_2021'].apply(my_agg_enem)
 
-       df_enem_mun_rgi['PROP_CAND_RGI_2018']=df_enem_mun_rgi['TOT_CAND_2018']/df_enem_mun_rgi['TOT_POPULACAO_2018']
        df_enem_mun_rgi['PROP_CAND_RGI_2019']=df_enem_mun_rgi['TOT_CAND_2019']/df_enem_mun_rgi['TOT_POPULACAO_2019']
        df_enem_mun_rgi['PROP_CAND_RGI_2020']=df_enem_mun_rgi['TOT_CAND_2020']/df_enem_mun_rgi['TOT_POPULACAO_2020']
-       df_enem_mun_rgi['MEDIA_NOTAS_RGI_2018']=df_enem_mun_rgi['PROD_MEDIA_CAND_2018']/df_enem_mun_rgi['TOT_CAND_2018']
+       df_enem_mun_rgi['PROP_CAND_RGI_2021']=df_enem_mun_rgi['TOT_CAND_2021']/df_enem_mun_rgi['TOT_POPULACAO_2021']
        df_enem_mun_rgi['MEDIA_NOTAS_RGI_2019']=df_enem_mun_rgi['PROD_MEDIA_CAND_2019']/df_enem_mun_rgi['TOT_CAND_2019']
-       df_enem_mun_rgi['MEDIA_NOTAS_RGI_2020']=df_enem_mun_rgi['PROD_MEDIA_CAND_2020']/df_enem_mun_rgi['TOT_CAND_2020']
+       df_enem_mun_rgi['MEDIA_NOTAS_RGI_2020']=df_enem_mun_rgi['PROD_MEDIA_CAND_2020']/df_enem_mun_rgi['TOT_CAND_2019']
+       df_enem_mun_rgi['MEDIA_NOTAS_RGI_2021']=df_enem_mun_rgi['PROD_MEDIA_CAND_2021']/df_enem_mun_rgi['TOT_CAND_2021']
 
        return df_enem_mun_rgi
 

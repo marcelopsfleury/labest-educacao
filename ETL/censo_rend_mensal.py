@@ -22,8 +22,8 @@ df_censo_2010_pop = selecionar_colunas_censo_pop(path_censo_2010_pop)
 df_censo_2010_pop_renda = merge_pop_renda(df_censo_2010_renda, df_censo_2010_pop)
 
 # Lendo dados de população por RGI
-path_ibge_rgi_muni = './dados_saida/regiao_geografica_municipios.xlsx'
-df_reg_muni = pd.read_excel(path_ibge_rgi_muni)
+path_ibge_rgi_muni = './dados_saida/regiao_geografica_municipios.csv'
+df_reg_muni = pd.read_csv(path_ibge_rgi_muni)
 
 # Fazendo o merge das informações de redimento (per capta) e população dos municípios por RGI
 df_rgi_merged = merge_rendimento_pop_rgi(df_reg_muni, df_censo_2010_pop_renda)
@@ -51,6 +51,6 @@ df_rgi_rend_w_md = calcular_media_ponderada_por_rgi(df_rgi_merged)
 df_rgi_rend_mean_md = merge_renda_media_ponderada(df_rgi_rend_mean_md, df_rgi_rend_w_md)
 
 # Exportando os dados da pasta local
-path_output = './dados_saida/rgi_rendimento_mensal_med_md_pond.xlsx'
-df_rgi_rend_mean_md.to_excel(path_output, index=False)
+path_output = './dados_saida/rgi_rendimento_mensal_med_md_pond.csv'
+df_rgi_rend_mean_md.to_csv(path_output, index=False, sep=',')
 # %%

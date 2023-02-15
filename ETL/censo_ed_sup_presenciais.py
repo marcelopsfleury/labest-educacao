@@ -58,5 +58,6 @@ df_educ_superior.to_csv(path_output, index=False, sep=',')
 
 import pandas as pd
 
-df = pd.read_csv('./dados_saida/ES_cursos_presenciais_2021.csv', delimiter=';')
+df_colunas = pd.read_csv('./dados_saida/ES_cursos_presenciais.csv', delimiter=',')
+df_linhas = pd.read_csv('./dados_saida/ES_cursos_presenciais_2021.csv', delimiter=',', encoding="Latin-1")
 # %%

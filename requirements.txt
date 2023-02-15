@@ -4,3 +4,10 @@ numpy==1.23.5
 xlrd>=1.0.0
 openpyxl
 fsspec
+scikit-learn>=1.2.1
+xgboost>=1.7.3
+lazypredict>=0.2.12
+yellowbrick==1.5
+tensorflow==2.11.0
+scikeras==0.10.0
+keras==2.11.0

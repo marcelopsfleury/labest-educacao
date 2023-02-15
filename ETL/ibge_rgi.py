@@ -12,6 +12,6 @@ df_reg_muni = selecionar_colunas_ibge_rgi(path_ibge_regioes)
 df_reg_muni = aplicar_testar_polo(df_reg_muni)
 
 # Exportando os dados da pasta local
-path_output = './dados_saida/regiao_geografica_municipios.xlsx'
-df_reg_muni.to_excel(path_output, index=False)
+path_output = './dados_saida/regiao_geografica_municipios.csv'
+df_reg_muni.to_csv(path_output, index=False, sep=',')
 

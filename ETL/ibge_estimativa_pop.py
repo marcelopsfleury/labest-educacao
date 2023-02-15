@@ -11,7 +11,5 @@ df_mun_uf = transformar_resposta(resposta_api)
 df_mun_uf = tratamento_colunas(df_mun_uf)
 
 # Exportando os dados da pasta local
-path_output = './dados_saida/estimativa_pop_municipios.xlsx'
-df_mun_uf.to_excel(path_output, index=False)
-
-
+path_output = './dados_saida/estimativa_pop_municipios.csv'
+df_mun_uf.to_csv(path_output, index=False, sep=',')

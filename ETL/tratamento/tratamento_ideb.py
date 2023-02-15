@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-def matriculas_por_tipo_escola_municipio(df_censo_basica):
+def matriculas_por_tipo_escola_municipio(df_censo_basica, ano):
     # Total de matrículas no ensino médio por município e tipo de escola (pública/privada) para o ano de 2019
     df_censo_basica["ANO"] = df_censo_basica["ANO"].astype(str)
-    df_mat_med_rede = df_censo_basica[(df_censo_basica['ANO'] == '2019')&(df_censo_basica['TIPO_ESCOLA'].isin([2,4]))&\
+    df_mat_med_rede = df_censo_basica[(df_censo_basica['ANO'] == ano)&(df_censo_basica['TIPO_ESCOLA'].isin([2,4]))&\
                                  (df_censo_basica['QT_TOT_MAT_MED'] > 0)].groupby(['COD_MUN','TIPO_ESCOLA'], as_index=False)\
                                 ['QT_TOT_MAT_MED'].sum()
 
@@ -23,15 +23,18 @@ def calcular_prop_rede_escolar(df_mat_med_rede):
 
     return df_mat_prop_med_rede
 
-def selecionar_colunas_ideb(path_ideb_med):
+def selecionar_colunas_ideb(path_ideb_med, ano):
     # Lendo dados do Ideb por município (ano de 2019)
     #importando os dados da pasta local
     cols_names=['UF','COD_MUN','MUNICIPIO','TIPO_REDE','IDEB']
     dict= {'UF':str, 'COD_MUN':str, 'MUNICIPIO':str, 'TIPO_REDE':str,'IDEB':np.float64}
-    df_ideb_med = pd.read_excel(path_ideb_med, dtype=str,skiprows=9, skipfooter=3, usecols=[0,1,2,3,23], na_values='-', names=cols_names)
+    if ano == 2019:
+        usecols=[0,1,2,3,23]
+    else:
+        usecols=[0,1,2,3,13]
+    df_ideb_med = pd.read_excel(path_ideb_med, dtype=str,skiprows=9, skipfooter=3, usecols=usecols, na_values='-', names=cols_names)
     df_ideb_med.dropna(subset = ['IDEB'],inplace=True)
     df_ideb_med.reset_index(inplace=True)
-    # df_ideb_med
 
     # Pivoteando o DF por tipo de escola
     df_ideb_med['IDEB'] = df_ideb_med['IDEB'].astype(np.float64)
